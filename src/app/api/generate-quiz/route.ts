@@ -23,16 +23,16 @@ export async function POST(req: NextRequest) {
   }
 
   const params = parsed.data;
+  const apiKey = req.headers.get("x-api-key") || process.env.GEMINI_API_KEY || null;
 
-  // Demo mode: no Gemini key configured. Serves a deterministic sample quiz
-  // so the full product can be exercised without any external dependency.
-  if (!process.env.GEMINI_API_KEY) {
+  // Demo mode: no key provided (neither header nor env). Serve deterministic sample quiz.
+  if (!apiKey) {
     const quiz = generateMockQuiz(params);
     return NextResponse.json({ quiz, mode: "demo" satisfies "demo" });
   }
 
   try {
-    const quiz = await generateQuizWithGemini(params);
+    const quiz = await generateQuizWithGemini(params, apiKey);
     return NextResponse.json({ quiz, mode: "live" satisfies "live" });
   } catch (err) {
     if (err instanceof QuizGenerationError) {

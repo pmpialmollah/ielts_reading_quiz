@@ -23,9 +23,10 @@ function stripCodeFences(text: string): string {
  * and retries with corrective feedback if the model returns malformed JSON.
  */
 export async function generateQuizWithGemini(
-  params: GenerateQuizRequest
+  params: GenerateQuizRequest,
+  apiKeyOverride?: string | null
 ): Promise<QuizPayload> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = apiKeyOverride || process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new QuizGenerationError("GEMINI_API_KEY is not configured");
   }

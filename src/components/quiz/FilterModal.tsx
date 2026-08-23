@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BookOpenText, Sparkles } from "lucide-react";
+import { BookOpenText, Sparkles, Settings } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { useQuizStore } from "@/store/useQuizStore";
@@ -57,6 +58,7 @@ export function FilterModal() {
   const status = useQuizStore((s) => s.status);
   const generationError = useQuizStore((s) => s.generationError);
   const { push } = useToast();
+  const router = useRouter();
 
   const [topic, setTopic] = useState(TOPICS[0]);
   const [customTopic, setCustomTopic] = useState("");
@@ -94,9 +96,13 @@ export function FilterModal() {
 
     setGenerating();
     try {
+      const apiToken = typeof window !== "undefined" ? localStorage.getItem("API_TOKEN") : null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (apiToken) headers["x-api-key"] = apiToken;
+
       const res = await fetch("/api/generate-quiz", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           topic: finalTopic,
           questionTypes,
@@ -131,11 +137,18 @@ export function FilterModal() {
     <div className="min-h-screen w-full flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-2xl animate-fade-up">
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-4">
             <div className="h-9 w-9 rounded-[var(--radius-control)] bg-navy flex items-center justify-center">
               <BookOpenText className="h-4.5 w-4.5 text-white" />
             </div>
-            <span className="font-semibold text-lg tracking-tight">IELTS Mind AI</span>
+              <span className="font-semibold text-lg tracking-tight">IELTS Mind AI</span>
+              <button
+                aria-label="Open settings"
+                onClick={() => router?.push("/settings")}
+                className="ml-3 text-ink-faint hover:text-ink"
+              >
+                <Settings className="h-5 w-5" />
+              </button>
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-ink mb-2">
             Build your reading test

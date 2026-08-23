@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BookOpenText, Home, Pause, Play, RotateCcw, Send } from "lucide-react";
+import { BookOpenText, Home, Pause, Play, RotateCcw, Send, Settings } from "lucide-react";
 import { useQuizStore } from "@/store/useQuizStore";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Dialog } from "@/components/ui/Dialog";
 import { formatTime } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export function Header() {
   const quiz = useQuizStore((s) => s.quiz);
@@ -33,6 +34,34 @@ export function Header() {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [status, paused, tick]);
+
+  const router = useRouter();
+
+  // Warn user on reload/close when a test is in progress, and clear state on actual unload
+  useEffect(() => {
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      if (status === "in_progress") {
+        e.preventDefault();
+        e.returnValue = ""; // show native confirmation dialog
+        return "";
+      }
+      return undefined;
+    }
+
+    function handleUnload() {
+      // When the page really unloads, reset the quiz so next load shows home
+      if (status === "in_progress") {
+        resetQuiz();
+      }
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("unload", handleUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("unload", handleUnload);
+    };
+  }, [status, resetQuiz]);
 
   if (!quiz) return null;
 
@@ -61,6 +90,11 @@ export function Header() {
           <Button size="sm" variant="secondary" onClick={() => setConfirmHomeOpen(true)}>
             <Home className="h-3.5 w-3.5" />
             Home
+          </Button>
+
+          <Button size="sm" variant="ghost" onClick={() => router.push("/settings")}>
+            <Settings className="h-3.5 w-3.5" />
+            Settings
           </Button>
 
           {!isSubmitted && (
