@@ -8,10 +8,14 @@ export function PassageViewer({
   activeParagraphId,
   initialScroll,
   onSaveScroll,
+  focusQuote,
+  focusQuestionId,
 }: {
   activeParagraphId?: string | null;
   initialScroll?: number;
   onSaveScroll?: (v: number) => void;
+  focusQuote?: string | null;
+  focusQuestionId?: number | null;
 }) {
   const quiz = useQuizStore((s) => s.quiz);
   const highlights = useQuizStore((s) => s.highlights);
@@ -58,8 +62,8 @@ export function PassageViewer({
     if (!containerRect) return;
 
     setTooltip({
-      x: rect.left - containerRect.left + rect.width / 2,
-      y: rect.top - containerRect.top - 8,
+      x: rect.left - containerRect.left + (containerRef.current?.scrollLeft ?? 0) + rect.width / 2,
+      y: rect.top - containerRect.top + (containerRef.current?.scrollTop ?? 0) - 6,
       text,
       paragraphId,
     });
@@ -105,6 +109,43 @@ export function PassageViewer({
       )
     );
   }
+
+  // When a specific quote is provided, render and focus the sentence(s)
+  function renderParagraphWithSentenceFocus(paragraphId: string, text: string, quote?: string | null, questionId?: number | null) {
+    if (!quote || !text.includes(quote)) return renderParagraphWithHighlights(paragraphId, text);
+
+    // Split into sentences (simple approach) and mark matching sentence(s)
+    const sentences = text.match(/[^.!?]+[.!?]*/g) || [text];
+
+    return sentences.map((s, i) => {
+      const trimmed = s.trim();
+      const isMatch = trimmed && trimmed.includes(quote);
+      return (
+        <span
+          key={i}
+          data-focus-sentence={isMatch ? "true" : undefined}
+          className={isMatch ? "inline-block -mx-3 px-3 py-1 rounded-md" : ""}
+          style={
+            isMatch
+              ? { background: "var(--highlight)", color: "var(--navy)", boxShadow: "inset 0 -2px 0 rgba(0,0,0,0.03)" }
+              : undefined
+          }
+        >
+          {renderParagraphWithHighlights(paragraphId, s)}
+          {isMatch && questionId != null && (
+            <span className="ml-2 text-[12px] font-mono text-ink-faint">[{questionId}]</span>
+          )}
+        </span>
+      );
+    });
+  }
+
+  // Scroll the focused sentence into view when requested
+  useEffect(() => {
+    if (!focusQuote || !containerRef.current) return;
+    const el = containerRef.current.querySelector('[data-focus-sentence="true"]') as HTMLElement | null;
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [focusQuote, activeParagraphId]);
 
   return (
     <div className="h-full flex flex-col">
@@ -168,11 +209,15 @@ export function PassageViewer({
               id={`para-${p.id}`}
               onMouseUp={() => handleMouseUp(p.id)}
               className={`passage-text scroll-mt-32 transition-colors rounded-md ${
-                activeParagraphId === p.id ? "bg-highlight-soft/40 -mx-3 px-3 py-2" : ""
+                activeParagraphId === p.id && (!focusQuote || !p.text.includes(focusQuote))
+                  ? "bg-highlight-soft/40 -mx-3 px-3 py-2"
+                  : ""
               }`}
             >
               <span className="para-label text-ink-faint mr-2 align-super">[{p.id}]</span>
-              {renderParagraphWithHighlights(p.id, p.text)}
+              {focusQuote && p.text.includes(focusQuote)
+                ? renderParagraphWithSentenceFocus(p.id, p.text, focusQuote, focusQuestionId)
+                : renderParagraphWithHighlights(p.id, p.text)}
             </p>
           ))}
         </div>

@@ -134,8 +134,8 @@ export function QuestionSheet({ initialScroll, onSaveScroll }: { initialScroll?:
     }
 
     setTooltip({
-      x: rect.left - containerRect.left + rect.width / 2,
-      y: rect.top - containerRect.top - 8,
+      x: rect.left - containerRect.left + (containerRef.current?.scrollLeft ?? 0) + rect.width / 2,
+      y: rect.top - containerRect.top + (containerRef.current?.scrollTop ?? 0) - 6,
       text,
       questionId: qId,
     });

@@ -30,6 +30,8 @@ export function FeedbackView() {
 
   const [locateParagraphId, setLocateParagraphId] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [locateQuote, setLocateQuote] = useState<string | null>(null);
+  const [locateQuestionId, setLocateQuestionId] = useState<number | null>(null);
 
   const results = useMemo(() => {
     if (!quiz) return [];
@@ -51,6 +53,8 @@ export function FeedbackView() {
     // Find which paragraph contains this quote.
     const para = quiz!.passage.paragraphs.find((p) => p.text.includes(paragraphQuote));
     setLocateParagraphId(para?.id ?? null);
+    setLocateQuote(paragraphQuote);
+    setLocateQuestionId(questionId);
     setExpandedId(questionId);
   }
 
@@ -98,7 +102,7 @@ export function FeedbackView() {
       {/* Split review */}
       <div className="flex-1 min-h-0 hidden sm:grid grid-cols-2">
         <div className="border-r border-border-subtle min-h-0">
-          <PassageViewer activeParagraphId={locateParagraphId} />
+          <PassageViewer activeParagraphId={locateParagraphId} focusQuote={locateQuote} focusQuestionId={locateQuestionId} />
         </div>
         <div className="min-h-0 overflow-y-auto thin-scroll px-6 py-5 space-y-3 bg-surface-sunken">
           {results.map(({ question, userAnswer, isCorrect }) => (
