@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+:root {
+  /* Surfaces */
+  --canvas: #fbfbfb;
+  --surface: #ffffff;
+  --surface-sunken: #f4f4f5;
+  --border-subtle: #e4e4e7;
+  --border-strong: #d4d4d8;
+
+  /* Ink */
+  --ink: #0f172a;
+  --ink-muted: #52525b;
+  --ink-faint: #a1a1aa;
+
+  /* Brand */
+  --accent: #4f46e5;
+  --accent-ink: #ffffff;
+  --accent-soft: #eef2ff;
+  --navy: #0f172a;
+
+  /* IELTS semantic */
+  --highlight: #ffd400; /* vivid high-contrast yellow */
+  --highlight-soft: rgba(255, 212, 0, 0.28);
+  --correct: #10b981;
+  --correct-soft: #ecfdf5;
+  --incorrect: #ef4444;
+  --incorrect-soft: #fef2f2;
+
+  --radius-card: 0.875rem;
+  --radius-control: 0.5rem;
+}
+
+.dark {
+  --canvas: #09090b;
+  --surface: #121214;
+  --surface-sunken: #18181b;
+  --border-subtle: #26262b;
+  --border-strong: #34343a;
+
+  --ink: #f4f4f5;
+  --ink-muted: #a1a1aa;
+  --ink-faint: #52525b;
+
+  --accent: #818cf8;
+  --accent-ink: #0f172a;
+  --accent-soft: #1e1b4b;
+  --navy: #e2e8f0;
+
+  --highlight: #ffd400;
+  --highlight-soft: rgba(255, 212, 0, 0.24);
+  --correct: #34d399;
+  --correct-soft: rgba(16, 185, 129, 0.12);
+  --incorrect: #f87171;
+  --incorrect-soft: rgba(239, 68, 68, 0.12);
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-navy: var(--navy);
+
+  --color-highlight: var(--highlight);
+  --color-highlight-soft: var(--highlight-soft);
+  --color-correct: var(--correct);
+  --color-correct-soft: var(--correct-soft);
+  --color-incorrect: var(--incorrect);
+  --color-incorrect-soft: var(--incorrect-soft);
+
+  --font-sans: "Inter", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-serif: "Source Serif 4", "Merriweather", Georgia, "Times New Roman", serif;
+
+  --radius-card: var(--radius-card);
+  --radius-control: var(--radius-control);
+}
+
+* {
+  border-color: var(--border-subtle);
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--highlight-soft);
+  color: var(--ink);
+}
+
+/* Passage reading typography */
+.passage-text {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--ink);
+}
+
+.passage-text mark {
+  background: var(--highlight);
+  color: var(--navy);
+  border-radius: 2px;
+  padding: 0 1px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.dark .passage-text mark {
+  background: var(--highlight);
+  color: var(--navy);
+}
+
+/* Paragraph rail marker — the signature structural element.
+   Each paragraph letter is a real anchor in the split-view test,
+   mirroring how candidates actually navigate an IELTS passage. */
+.para-label {
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.35s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none;
+  }
+}
+
+/* Thin scrollbars for panels */
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
