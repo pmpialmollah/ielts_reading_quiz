@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "IELTS Mind AI — Adaptive Reading Practice",
+  title: "IELTS Mind AI — Reading & Writing Practice",
   description:
-    "Generate authentic, band-calibrated IELTS Reading passages and question sets on demand.",
+    "Practice IELTS Reading and Writing with realistic AI-generated tasks and actionable feedback.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

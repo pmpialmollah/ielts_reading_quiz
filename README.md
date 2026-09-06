@@ -1,9 +1,8 @@
-# IELTS Mind AI — Adaptive Reading Practice
+# IELTS Mind AI — IELTS Reading & Writing Practice
 
-A hyper-customizable, AI-driven IELTS Academic Reading practice app. Generate a
-fresh passage and question set on demand (topic, question types, count, target
-band), take it in an authentic split-screen test layout with text highlighting
-and a timer, then review detailed AI feedback with passage-evidence locating.
+A hyper-customizable, AI-driven IELTS Academic practice app. Start from the
+landing page, choose Reading or Writing, then practise with realistic tasks,
+timing, and focused feedback.
 
 Built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4, Zustand,
 Framer Motion, `react-resizable-panels`, Zod, and the Gemini API.
@@ -53,7 +52,10 @@ demo or live mode.
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. The landing page links to `/reading` for the
+existing adaptive reading test and `/writing` for the writing studio. Writing
+supports Task 1 and Task 2, custom topics, word counts, timed responses, and AI
+feedback for task response, coherence, vocabulary, and grammar.
 
 ## 5. Build for production
 
@@ -69,7 +71,9 @@ npm run start
 ```
 src/
   app/
-    api/generate-quiz/route.ts   # POST endpoint: validates params, calls Gemini or demo generator
+    api/generate-quiz/route.ts   # Reading generation endpoint
+    api/generate-writing/route.ts # Writing task generation endpoint
+    api/evaluate-writing/route.ts # Writing feedback endpoint
     layout.tsx, page.tsx, globals.css
   components/
     quiz/

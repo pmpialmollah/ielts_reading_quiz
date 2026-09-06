@@ -171,3 +171,13 @@ body {
 .thin-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
+
+.writing-editor {
+  min-height: 320px;
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .writing-editor {
+    min-height: 220px;
+  }
+}
